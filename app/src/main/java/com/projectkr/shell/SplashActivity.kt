@@ -15,6 +15,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
 import com.omarea.common.shell.ShellExecutor
+import com.projectkr.shell.permissions.CheckRootStatus
 import com.omarea.krscript.executor.ScriptEnvironmen
 import kotlinx.android.synthetic.main.activity_splash.*
 import java.io.BufferedReader
@@ -87,7 +88,7 @@ class SplashActivity : Activity() {
      */
     private fun checkFileWrite(next: Runnable) {
         Thread(Runnable {
-            grantPermission()
+          //  grantPermission()
 
             if (!(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                         && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
