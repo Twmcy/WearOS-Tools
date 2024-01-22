@@ -43,19 +43,22 @@ public class CheckRootStatus(var context: Context, private var next: Runnable? =
                 } else {
                     myHandler.post {
                         KeepShellPublic.tryExit()
-                        val builder = AlertDialog.Builder(context) { _, _ ->
+                        val builder = AlertDialog.Builder(context)
+                                .setTitle(R.string.error_root)
+                                .setPositiveButton(R.string.btn_retry) { _, _ ->
                                     KeepShellPublic.tryExit()
                                     if (therad != null && therad!!.isAlive && !therad!!.isInterrupted) {
                                         therad!!.interrupt()
                                         therad = null
                                     }
                                     forceGetRoot()
-                                }{ _, _ ->
+                                }
+                                .setNegativeButton(R.string.btn_exit) { _, _ ->
                                     exitProcess(0)
                                     //android.os.Process.killProcess(android.os.Process.myPid())
                                 }
                         if (context.resources.getBoolean(R.bool.force_root) != true) {
-                            builder.setNeutralButton { _, _ ->
+                            builder.setNeutralButton(R.string.btn_skip) { _, _ ->
                                 if (next != null) {
                                     myHandler.post(next)
                                 }
