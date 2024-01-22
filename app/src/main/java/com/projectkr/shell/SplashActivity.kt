@@ -11,6 +11,8 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
+import android.widget.Toast
+import android.hardware.usb.UsbManager
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -184,6 +186,51 @@ private fun checkFileWrite(next: Runnable) {
             handler.post { onExit.run() }
         }
     }
+    
+    // ...
+
+/**
+ * 启动完成
+ */
+private fun startToFinish() {
+    start_state_text.text = getString(R.string.pop_started)
+
+    // 在这里检测OTG设备连接
+    checkOTGConnection()
+
+    val config = KrScriptConfig().init(this)
+    if (config.beforeStartSh.isNotEmpty()) {
+        BeforeStartThread(this, config, UpdateLogViewHandler(start_state_text, Runnable {
+            gotoHome()
+        })).start()
+    } else {
+        gotoHome()
+    }
+}
+
+/**
+ * 检查OTG设备连接
+ */
+private fun checkOTGConnection() {
+    // 这里可以使用Android的UsbManager来检测OTG设备的连接状态
+    val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+    val deviceList = usbManager.deviceList
+    if (deviceList.isNotEmpty()) {
+        // 有OTG设备连接，显示Toast提示
+        showToast("设备已连接")
+    }
+}
+
+/**
+ * 显示Toast提示
+ */
+private fun showToast(message: String) {
+    runOnUiThread {
+        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+    }
+}
+
+// ...
 
     private class BeforeStartThread(
         private var context: Context,
