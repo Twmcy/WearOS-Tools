@@ -1,47 +1,38 @@
-# 搞机助手·R 官方网站
+# My Android Kotlin Project
 
-## 开发
+## Introduction
 
-本站基于 [VitePress](https://vitepress.dev) 建立，网站内容均使用 Markdown 格式书写
+This project serves as a demonstration of how to develop an Android application using Kotlin. It includes various features such as executing Shell commands, displaying custom dialogs, and checking for updates.
 
-### 1. 克隆源码
+## Features
 
-```bash
-git clone https://github.com/liuran001/GJZS.git
-cd GJZS/docs
-```
+- **Execute Shell Commands**: Utilize `KeepShellPublic.doCmdSync()` to run Shell commands.
 
-### 2. 安装依赖
+- **Display Custom Dialogs**: Use the `DialogHelper` class to show custom dialogs, including handling the "Emergency" and "Recovery" button clicks.
 
-```bash
-# 使用 npm
-npm install
+- **Check for Updates**: Employ the `Update` class to check for application updates, display update information, and provide download links.
 
-# 使用 yarn
-yarn
+## Usage
 
-# 使用 pnpm
-pnpm install
-```
+### Execute Shell Commands
 
-### 3. 进行本地预览
+Use `KeepShellPublic.doCmdSync("your_command_here")` in your code to execute Shell commands.
 
-```bash
-# 使用 npm
-npm run dev
+### Display Custom Dialogs
 
-# 使用 yarn
-yarn dev
+Use the `DialogHelper` class to display custom dialogs.
 
-# 使用 pnpm
-pnpm run dev
-```
+### Check for Updates
 
-## 贡献
+Check for application updates using the `Update` class.
 
-欢迎提出 Issue 和 Pull request
+## About
 
-如果您想将网站内容翻译为其他语言，您需要在本项目根目录新增您语言的文件夹 (如 [en](/docs/en))，同时需要在 [.vitepress/locales](/docs/.vitepress/locales) 中新增您语言的配置文件
+This section can include additional information about the project, such as the author, license, contact information, etc.
+
+## Acknowledgments
+
+Acknowledgments and thanks to any contributors or open-source projects related to this project.
 
 ## 感谢
 
