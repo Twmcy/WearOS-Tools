@@ -11,8 +11,6 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.app.ActivityCompat
 import androidx.core.content.PermissionChecker
-import android.widget.Toast
-import android.hardware.usb.UsbManager
 import android.util.TypedValue
 import android.view.View
 import android.widget.TextView
@@ -21,6 +19,8 @@ import com.omarea.krscript.executor.ScriptEnvironmen
 import kotlinx.android.synthetic.main.activity_splash.*
 import java.io.BufferedReader
 import java.io.DataOutputStream
+import android.hardware.usb.UsbManager
+import android.widget.Toast
 
 class SplashActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,27 +43,27 @@ class SplashActivity : Activity() {
      * 界面主题样式调整
      */
     private fun updateThemeStyle() {
-        window.navigationBarColor = getColorAccent()
+        getWindow().setNavigationBarColor(getColorAccent())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.statusBarColor = getColor(R.color.splash_bg_color)
+            window.setNavigationBarColor(getColor(R.color.splash_bg_color))
         } else {
-            window.statusBarColor = resources.getColor(R.color.splash_bg_color)
+            window.setNavigationBarColor(resources.getColor(R.color.splash_bg_color))
         }
 
         //  得到当前界面的装饰视图
         if (Build.VERSION.SDK_INT >= 21) {
-            val decorView = window.decorView
+            val decorView = getWindow().getDecorView();
             //让应用主题内容占用系统状态栏的空间,注意:下面两个参数必须一起使用 stable 牢固的
             val option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-            decorView.systemUiVisibility = option
+            decorView.setSystemUiVisibility(option);
             //设置状态栏颜色为透明
-            window.statusBarColor = Color.TRANSPARENT
+            getWindow().setStatusBarColor(Color.TRANSPARENT)
         }
     }
 
     private fun getColorAccent(): Int {
         val typedValue = TypedValue()
-        theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
+        this.theme.resolveAttribute(R.attr.colorAccent, typedValue, true)
         return typedValue.data
     }
 
@@ -72,75 +72,83 @@ class SplashActivity : Activity() {
      */
     private fun checkPermissions() {
         start_logo.visibility = View.VISIBLE
-        start_state_text.text = getString(R.string.pio_permission_checking)
-        startToFinish()
+        checkRoot(Runnable {
+            start_state_text.text = getString(R.string.pio_permission_checking)
+            hasRoot = true
+
+            startToFinish()
+        })
     }
 
-    private fun checkPermission(permission: String): Boolean =
-        PermissionChecker.checkSelfPermission(applicationContext, permission) == PermissionChecker.PERMISSION_GRANTED
-// ...
-// ...
+    private fun checkPermission(permission: String): Boolean = PermissionChecker.checkSelfPermission(this.applicationContext, permission) == PermissionChecker.PERMISSION_GRANTED
 
-/**
- * 检查权限 主要是文件读写权限，包括OTG权限和USB设备权限
- */
-private fun checkFileWrite(next: Runnable) {
-    Thread(Runnable {
-        grantPermission()
+    /**
+     * 检查权限 主要是文件读写权限，包括OTG权限和USB设备权限
+     */
+    private fun checkFileWrite(next: Runnable) {
+        Thread(Runnable {
+            grantPermission()
 
-        if (!(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    && checkPermission("android.permission.WRITE_EXTERNAL_STORAGE")  // Add OTG permission here
-                    && checkPermission("android.permission.READ_EXTERNAL_STORAGE")  // Add OTG permission here
-                    && checkPermission(UsbManager.ACTION_USB_DEVICE_ATTACHED))) {  // Add USB device permission here
+            if (!(checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        && checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        && checkPermission("android.permission.WRITE_EXTERNAL_STORAGE")
+                        && checkPermission("android.permission.READ_EXTERNAL_STORAGE")
+                        && checkPermission(UsbManager.ACTION_USB_DEVICE_ATTACHED))) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                ActivityCompat.requestPermissions(
-                    this@SplashActivity,
-                    arrayOf(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        "android.permission.WRITE_EXTERNAL_STORAGE",  // Add OTG permission here
-                        "android.permission.READ_EXTERNAL_STORAGE",  // Add OTG permission here
-                        UsbManager.ACTION_USB_DEVICE_ATTACHED,  // Add USB device permission here
-                        Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
-                        Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                        Manifest.permission.WAKE_LOCK
-                    ),
-                    0x11
-                )
-            } else {
-                ActivityCompat.requestPermissions(
-                    this@SplashActivity,
-                    arrayOf(
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        "android.permission.WRITE_EXTERNAL_STORAGE",  // Add OTG permission here
-                        "android.permission.READ_EXTERNAL_STORAGE",  // Add OTG permission here
-                        UsbManager.ACTION_USB_DEVICE_ATTACHED,  // Add USB device permission here
-                        Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
-                        Manifest.permission.WAKE_LOCK
-                    ),
-                    0x11
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    ActivityCompat.requestPermissions(
+                        this@SplashActivity,
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            "android.permission.WRITE_EXTERNAL_STORAGE",
+                            "android.permission.READ_EXTERNAL_STORAGE",
+                            UsbManager.ACTION_USB_DEVICE_ATTACHED,
+                            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+                            Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                            Manifest.permission.WAKE_LOCK
+                        ),
+                        0x11
+                    )
+                } else {
+                    ActivityCompat.requestPermissions(
+                        this@SplashActivity,
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            "android.permission.WRITE_EXTERNAL_STORAGE",
+                            "android.permission.READ_EXTERNAL_STORAGE",
+                            UsbManager.ACTION_USB_DEVICE_ATTACHED,
+                            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+                            Manifest.permission.WAKE_LOCK
+                        ),
+                        0x11
+                    )
+                }
             }
-        }
 
-        myHandler.post {
-            next.run()
-        }
-    }).start()
-}
+            myHandler.post {
+                next.run()
+            }
+        }).start()
+    }
 
-// ...
-
+    private var hasRoot = false
     private var myHandler = Handler()
+
+    private fun checkRoot(next: Runnable) {
+        // CheckRootStatus(this, next).forceGetRoot() // 删除了Root检测
+        next.run()
+    }
 
     /**
      * 启动完成
      */
     private fun startToFinish() {
         start_state_text.text = getString(R.string.pop_started)
+
+        // 检测OTG设备连接
+        checkOTGConnection()
 
         val config = KrScriptConfig().init(this)
         if (config.beforeStartSh.isNotEmpty()) {
@@ -153,15 +161,35 @@ private fun checkFileWrite(next: Runnable) {
     }
 
     private fun gotoHome() {
-        if (intent != null && intent.hasExtra("JumpActionPage") && intent.getBooleanExtra("JumpActionPage", false)) {
-            val actionPage = Intent(applicationContext, ActionPage::class.java)
-            actionPage.putExtras(intent)
+        if (this.intent != null && this.intent.hasExtra("JumpActionPage") && this.intent.getBooleanExtra("JumpActionPage", false)) {
+            val actionPage = Intent(this.applicationContext, ActionPage::class.java)
+            actionPage.putExtras(this.intent)
             startActivity(actionPage)
         } else {
-            val home = Intent(applicationContext, MainActivity::class.java)
+            val home = Intent(this.applicationContext, MainActivity::class.java)
             startActivity(home)
         }
         finish()
+    }
+
+    /**
+     * 检查OTG设备连接
+     */
+    private fun checkOTGConnection() {
+        val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
+        val deviceList = usbManager.deviceList
+        if (deviceList.isNotEmpty()) {
+            showToast("OTG设备已连接")
+        }
+    }
+
+    /**
+     * 显示Toast提示
+     */
+    private fun showToast(message: String) {
+        runOnUiThread {
+            Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private class UpdateLogViewHandler(private var logView: TextView, private val onExit: Runnable) {
@@ -177,7 +205,7 @@ private fun checkFileWrite(next: Runnable) {
                         someIgnored = true
                     }
                     notificationMessageRows.add(log)
-                    logView.text = notificationMessageRows.joinToString("\n", if (someIgnored) "……\n" else "").trim()
+                    logView.setText(notificationMessageRows.joinToString("\n", if (someIgnored) "……\n" else "").trim())
                 }
             }
         }
@@ -186,62 +214,13 @@ private fun checkFileWrite(next: Runnable) {
             handler.post { onExit.run() }
         }
     }
-    
-    // ...
 
-/**
- * 启动完成
- */
-private fun startToFinish() {
-    start_state_text.text = getString(R.string.pop_started)
-
-    // 在这里检测OTG设备连接
-    checkOTGConnection()
-
-    val config = KrScriptConfig().init(this)
-    if (config.beforeStartSh.isNotEmpty()) {
-        BeforeStartThread(this, config, UpdateLogViewHandler(start_state_text, Runnable {
-            gotoHome()
-        })).start()
-    } else {
-        gotoHome()
-    }
-}
-
-/**
- * 检查OTG设备连接
- */
-private fun checkOTGConnection() {
-    // 这里可以使用Android的UsbManager来检测OTG设备的连接状态
-    val usbManager = getSystemService(Context.USB_SERVICE) as UsbManager
-    val deviceList = usbManager.deviceList
-    if (deviceList.isNotEmpty()) {
-        // 有OTG设备连接，显示Toast提示
-        showToast("设备已连接")
-    }
-}
-
-/**
- * 显示Toast提示
- */
-private fun showToast(message: String) {
-    runOnUiThread {
-        Toast.makeText(applicationContext, message, Toast.LENGTH_SHORT).show()
-    }
-}
-
-// ...
-
-    private class BeforeStartThread(
-        private var context: Context,
-        private val config: KrScriptConfig,
-        private var updateLogViewHandler: UpdateLogViewHandler
-    ) : Thread() {
-        val params = config.getVariables()
+    private class BeforeStartThread(private var context: Context, private val config: KrScriptConfig, private var updateLogViewHandler: UpdateLogViewHandler) : Thread() {
+        val params = config.getVariables();
 
         override fun run() {
             try {
-                val process = ShellExecutor.getRuntime()
+                val process = if (CheckRootStatus.lastCheckResult) ShellExecutor.getSuperUserRuntime() else ShellExecutor.getRuntime()
                 if (process != null) {
                     val outputStream = DataOutputStream(process.outputStream)
 
@@ -263,7 +242,7 @@ private fun showToast(message: String) {
 
     private class StreamReadThread(private var reader: BufferedReader, private var updateLogViewHandler: UpdateLogViewHandler) : Thread() {
         override fun run() {
-            var line: String?
+            var line: String? = ""
             while (true) {
                 line = reader.readLine()
                 if (line == null) {
