@@ -1,8 +1,8 @@
-# My Android Kotlin Project
+# WearOS 管家
 
-## Introduction
+## 什么是WearOS 管家
 
-This project serves as a demonstration of how to develop an Android application using Kotlin. It includes various features such as executing Shell commands, displaying custom dialogs, and checking for updates.
+一个免Root的手表工具箱，同时也支持手机给手机刷机，也可以手表刷机，支持自定义操作，免费开源，基于scene和autojs和pio部分代码，后面会加入WearOS Store
 
 ## Features
 
@@ -36,4 +36,6 @@ Acknowledgments and thanks to any contributors or open-source projects related t
 
 ## 感谢
 
-贡献者列表参阅 [Contributors](https://github.com/liuran001/GJZS/graphs/contributors)
+Scene5 [Contributors](https://github.com/liuran001/GJZS/graphs/contributors)
+pio [Contributors]
+(https://github.com/helloklf/vtools/tree/scene)
