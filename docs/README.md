@@ -4,6 +4,8 @@
 
 一个免Root的手表工具箱，同时也支持手机给手机刷机，也可以手表刷机，支持自定义操作，免费开源，基于scene和autojs和pio部分代码，后面会加入WearOS Store
 
+目前与搞机工具箱合并，已归档，请去看另外一个项目
+
 ## Features
 
 - **Execute Shell Commands**: Utilize `KeepShellPublic.doCmdSync()` to run Shell commands.
